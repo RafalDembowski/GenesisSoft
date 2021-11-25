@@ -22,7 +22,7 @@ namespace Application.General
             TotalCount = count;
             AddRange(items);
         }
-          
+            
         public static async Task<PagedList<T>> ToPagedList(IQueryable<T> source, int pageNumber, int pageSize)
         {
             var count = await source.CountAsync();
