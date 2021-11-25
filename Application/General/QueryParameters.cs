@@ -12,15 +12,14 @@ namespace Application.General
 
         public int PageSize
         {
-            get
-            {
-                return _pageSize;
-            }
-            set
-            {
-                _pageSize = (value > MaxPageSize || value < 0 ) ? MaxPageSize : value;
-            }
+            get => _pageSize;
+            set => _pageSize = (value > MaxPageSize || value < 0) ? MaxPageSize : value;
         }
-        public string OrderBy { get; set; }
+        private string _orderBy;
+        public string OrderBy 
+        {
+            get => _orderBy;
+            set => _orderBy = value.ToLower();
+        }
     }
 }

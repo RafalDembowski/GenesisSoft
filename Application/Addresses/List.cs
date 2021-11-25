@@ -1,10 +1,13 @@
 ﻿using Application.General;
 using Domain;
+using Infrastructure.Helpers;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,7 +31,12 @@ namespace Application.Addresses
 
             public async Task<Result<PagedList<Address>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var query = _context.Addresses.AsQueryable();
+                var test = SortHelpers.ValidateSortQueryParameters(request.Params.OrderBy);
+
+                var query = _context.Addresses
+                    .OrderBy(test)
+                    .AsQueryable();
+                
                 return Result<PagedList<Address>>.Success( 
                     await PagedList<Address>.ToPagedList(query , request.Params.PageNumber , request.Params.PageSize )
                 );
