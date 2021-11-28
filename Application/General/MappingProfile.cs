@@ -14,6 +14,7 @@ namespace Application.General
         {
             CreateMap<UserRegisterDto, User>();
             CreateMap<ProductDto, Product>();
+            CreateMap<User, UserDto>();
         }
     }
 }

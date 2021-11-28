@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Services;
 using Application.Users;
 using AutoMapper;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
+    [AllowAnonymous]
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
@@ -19,16 +22,18 @@ namespace API.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IMapper _mapper;
+        private readonly JwtTokenService _jwtTokenService;
 
-        public UsersController(UserManager<User> userManager , SignInManager<User> signInManager , IMapper mapper)
+        public UsersController(UserManager<User> userManager , SignInManager<User> signInManager , IMapper mapper , JwtTokenService jwtTokenService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
+            _jwtTokenService = jwtTokenService;
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<User>> Login(UserLoginDto userLoginDto)
+        public async Task<ActionResult<UserDto>> Login(UserLoginDto userLoginDto)
         {
             User user = await _userManager.FindByEmailAsync(userLoginDto.Email);
 
@@ -40,9 +45,9 @@ namespace API.Controllers
             if (!result.Succeeded)
                 return Unauthorized("Incorrect password");
 
-            //dodać ustawienie jwt tokena
-
-            return user;
+            UserDto userDto = _mapper.Map<UserDto>(user);
+            userDto.Token = _jwtTokenService.CreateJwtToken(user);
+            return userDto;
 
         }
         
