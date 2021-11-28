@@ -31,10 +31,10 @@ namespace Application.Addresses
 
             public async Task<Result<PagedList<Address>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var test = SortHelpers.ValidateSortQueryParameters(request.Params.OrderBy);
+                var orderBy = SortHelpers.ValidateSortQueryParameters(request.Params.OrderBy);
 
                 var query = _context.Addresses
-                    .OrderBy(test)
+                    .OrderBy(orderBy)
                     .AsQueryable();
                 
                 return Result<PagedList<Address>>.Success( 

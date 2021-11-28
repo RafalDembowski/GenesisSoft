@@ -5,13 +5,12 @@ using System.Text;
 
 namespace Domain
 {
+    /*pamieta o dodaniu struktury i zespolu*/
     public class User : IdentityUser
     {
         public string Name { get; set; }
         public string LastName { get; set; }
-/*        public Address Address { get; set; }
-        public Structure Structure { get; set; }
-        public Team Team { get; set; }*/
+        public Address Address { get; set; }
     }
 }
 

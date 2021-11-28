@@ -4,10 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Middlewares;
 using Application.Addresses;
+using Application.General;
+using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -33,11 +36,22 @@ namespace API
         {
             services.AddControllers();
             services.AddSwaggerGen();
+
             services.AddDbContext<DataContext>( opt => 
             {
                 opt.UseSqlite(_configuration.GetConnectionString("DefaultConnection"));
             });
+
             services.AddMediatR(typeof(List.Handler).Assembly);
+            services.AddAutoMapper(typeof(MappingProfile).Assembly);
+
+            services.AddIdentityCore<User>( opt =>
+            {
+                opt.Password.RequireNonAlphanumeric = false;
+            })
+            .AddEntityFrameworkStores<DataContext>()
+            .AddSignInManager<SignInManager<User>>();
+            services.AddAuthentication();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

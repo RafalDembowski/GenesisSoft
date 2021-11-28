@@ -11,7 +11,7 @@ namespace Infrastructure.Helpers
             StringBuilder sortQueryParameterBuilder = new StringBuilder();
 
             if (String.IsNullOrEmpty(sortQueryParameter))
-                return "";
+                return "1";
 
             if (!(sortQueryParameter.EndsWith(" desc") ||  sortQueryParameter.EndsWith(" asc")))
             {
