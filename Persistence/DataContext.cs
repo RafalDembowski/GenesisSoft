@@ -49,12 +49,10 @@ namespace Persistence
                 if(entityEntry.State == EntityState.Added)
                 {
                     ((Entity)entityEntry.Entity).CreatedAt = DateTime.Now;
-                    //tutaj dodać użytkownika który dodał entity
                 }
                 if(entityEntry.State == EntityState.Modified)
                 {
                     ((Entity)entityEntry.Entity).UpdatedAt = DateTime.Now;
-                    //tutaj dodać użytkownika który edytował entity
                 }
             }
 

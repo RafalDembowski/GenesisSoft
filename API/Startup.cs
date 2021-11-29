@@ -7,7 +7,9 @@ using API.Middlewares;
 using API.Services;
 using Application.Addresses;
 using Application.General;
+using Application.Interfaces;
 using Domain;
+using Infrastructure.Helpers;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -52,10 +54,11 @@ namespace API
             {
                 opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "Please insert JWT with Bearer into field",
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey
+                    Scheme = "bearer",
+                    Description = "Please insert JWT token into field"
                 });
                 opt.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
@@ -68,7 +71,7 @@ namespace API
                                 Id = "Bearer"
                             }
                         },
-                        new string[] {}
+                        new string[] { }
                     }
                 });
             });
@@ -80,7 +83,7 @@ namespace API
 
             services.AddMediatR(typeof(List.Handler).Assembly);
             services.AddAutoMapper(typeof(MappingProfile).Assembly);
-
+            services.AddScoped<IUserAccessHelper, UserAccessHelper>();
             //identity
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["TokenKey"]));
             services.AddIdentityCore<User>( opt =>

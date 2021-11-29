@@ -31,7 +31,7 @@ namespace Application.Addresses
 
             public async Task<Result<PagedList<Address>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var orderBy = SortHelpers.ValidateSortQueryParameters(request.Params.OrderBy);
+                var orderBy = SortHelper.ValidateSortQueryParameters(request.Params.OrderBy);
 
                 var query = _context.Addresses
                     .OrderBy(orderBy)

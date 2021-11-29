@@ -13,8 +13,13 @@ namespace Application.General
         public MappingProfile()
         {
             CreateMap<UserRegisterDto, User>();
-            CreateMap<ProductDto, Product>();
             CreateMap<User, UserDto>();
+            CreateMap<ProductCreateDto, Product>();
+            CreateMap<Product, ProductListDto>()
+                .ForMember(p => p.UpdatedBy, o => o.MapFrom(s => s.UpdatedBy.Name))
+                .ForMember(p => p.CreatedBy, o => o.MapFrom(s => s.CreatedBy.Name))
+                .ForMember(p => p.ProducerName, o => o.MapFrom(s => s.Producer.Name))
+                .ForMember(p => p.CategoryName, o => o.MapFrom(s => s.Category.Name));
         }
     }
 }

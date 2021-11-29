@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Infrastructure.Helpers
 {
-    public static class SortHelpers
+    public static class SortHelper
     {
         public static string ValidateSortQueryParameters(string sortQueryParameter)
         {
