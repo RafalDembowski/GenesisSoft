@@ -14,8 +14,8 @@ namespace Application.General
         {
             CreateMap<UserRegisterDto, User>();
             CreateMap<User, UserDto>();
-            CreateMap<ProductCreateDto, Product>();
-            CreateMap<Product, ProductListDto>()
+            CreateMap<ProductCommandDto, Product>();
+            CreateMap<Product, ProductQueryDto>()
                 .ForMember(p => p.UpdatedBy, o => o.MapFrom(s => s.UpdatedBy.Name))
                 .ForMember(p => p.CreatedBy, o => o.MapFrom(s => s.CreatedBy.Name))
                 .ForMember(p => p.ProducerName, o => o.MapFrom(s => s.Producer.Name))

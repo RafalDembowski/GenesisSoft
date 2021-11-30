@@ -18,12 +18,12 @@ namespace Application.Products
 {
     public class List
     {
-        public class Query : IRequest<Result<PagedList<ProductListDto>>>
+        public class Query : IRequest<Result<PagedList<ProductQueryDto>>>
         {
             public QueryParameters Params { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<PagedList<ProductListDto>>>
+        public class Handler : IRequestHandler<Query, Result<PagedList<ProductQueryDto>>>
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
@@ -34,17 +34,17 @@ namespace Application.Products
                 _mapper = mapper;
             }
 
-            public async Task<Result<PagedList<ProductListDto>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<PagedList<ProductQueryDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
                 string orderBy = SortHelper.ValidateSortQueryParameters(request.Params.OrderBy);
 
                 var query = _context.Products
                     .OrderBy(orderBy)
-                    .ProjectTo<ProductListDto>(_mapper.ConfigurationProvider)
+                    .ProjectTo<ProductQueryDto>(_mapper.ConfigurationProvider)
                     .AsQueryable();
 
-                return Result<PagedList<ProductListDto>>.Success(
-                    await PagedList<ProductListDto>.ToPagedList(query, request.Params.PageNumber, request.Params.PageSize)
+                return Result<PagedList<ProductQueryDto>>.Success(
+                    await PagedList<ProductQueryDto>.ToPagedList(query, request.Params.PageNumber, request.Params.PageSize)
                 );
             }
         }

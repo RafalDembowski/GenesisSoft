@@ -17,7 +17,7 @@ namespace Application.Products
     {
         public class Command : IRequest<Result<Unit>>
         {
-            public ProductCreateDto Product { get; set; }
+            public ProductCommandDto Product { get; set; }
             public Guid Id { get; set; }
         }
 

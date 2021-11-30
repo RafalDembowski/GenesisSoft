@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Application.Products
 {
-    public class ProductListDto
+    public class ProductQueryDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
