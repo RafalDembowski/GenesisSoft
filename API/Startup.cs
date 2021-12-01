@@ -81,6 +81,19 @@ namespace API
                 opt.UseSqlite(_configuration.GetConnectionString("DefaultConnection"));
             });
 
+            services.AddCors(opt =>
+            {
+                opt.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                        .WithExposedHeaders("WWW-Authenticate", "Pagination")
+                        .WithOrigins("http://localhost:3003");
+                });
+            });
+
             services.AddMediatR(typeof(List.Handler).Assembly);
             services.AddAutoMapper(typeof(MappingProfile).Assembly);
             services.AddScoped<IUserAccessHelper, UserAccessHelper>();
@@ -124,7 +137,7 @@ namespace API
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseCors("CorsPolicy");
             app.UseAuthorization();
             app.UseAuthentication();
 
