@@ -1,14 +1,16 @@
 import { observer } from 'mobx-react-lite';
 import React, { useEffect , useState } from 'react'
 import { Container, Content, Table , Pagination } from 'rsuite'
+import { PagingParams } from '../../models/pagination';
 import { useStore } from '../../stores/store';
 
 export default observer(function ProductList(){
 
     const { productStore } = useStore();
-    const { loading , products , getProducts , setOrderBy } = productStore;
+    const { loading , products , pagination , getProducts , setOrderBy , setPagingParams , pagingParams } = productStore;
     const [ sortType , setSortType ] = useState<any>();
     const [ sortColumn , setSortColumn ] = useState< string | undefined >();
+    const [ page , setPage ] = useState<number>(1);
 
     useEffect(() => {
         getProducts();
@@ -21,8 +23,15 @@ export default observer(function ProductList(){
           setOrderBy(orderBy);
     };
 
-    const handleChangeLimit = (dataKey : any ) => {
+    const handleChangePage = (page : number) => {
+        const newPagingParams = new PagingParams(page , pagingParams.pageSize);
+        setPage(page);
+        setPagingParams(newPagingParams);
+    }
 
+    const handleChangeLimit = (dataKey : any ) => {
+        const newPagingParams = new PagingParams(pagingParams.currentPage , dataKey);
+        setPagingParams(newPagingParams);
     };
 
     return (
@@ -80,6 +89,7 @@ export default observer(function ProductList(){
                     </Table.Column>
 
                 </Table>
+                { (pagination) &&
                 <div style={{padding: 20}}> 
                     <Pagination
                         prev
@@ -87,13 +97,19 @@ export default observer(function ProductList(){
                         first
                         last
                         size="xs"
-                        layout={['total', '-', 'limit', '|', 'pager' , 'skip']}
-                        total={150}
+                        layout={['total', '-', 'limit' ,'|', 'pager']}
+                        total={pagination!.totalCount}
+                        limit={pagination!.pageSize}
                         limitOptions={[10, 20]}
-                        limit={10}
+                        activePage={page}
+                        onChangePage={handleChangePage}
+                        onChangeLimit={handleChangeLimit}
                     />                  
                 </div>
+                }
+                
             </Content>
+                
         </Container>
     )
 })

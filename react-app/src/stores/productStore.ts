@@ -1,5 +1,6 @@
 import {  makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
+import { Pagination, PagingParams } from "../models/pagination";
 import { Product } from "../models/product";
 
 export default class ProductStore {
@@ -7,7 +8,9 @@ export default class ProductStore {
     products: Product[] = [];
     loading = false;
     orderBy: string = '';
-
+    pagination: Pagination | null = null;
+    pagingParams = new PagingParams();
+    
     constructor(){
         makeAutoObservable(this)
     }
@@ -18,17 +21,22 @@ export default class ProductStore {
         if(this.orderBy !== ''){
             params.append('OrderBy', this.orderBy);
         }
-        
+
+        params.append('PageNumber' , this.pagingParams.currentPage.toString());
+        params.append('PageSize' , this.pagingParams.pageSize.toString());
+       
         return params;
     }
 
     getProducts = async () => {
         this.loading = true;
         try{
-            const products = await agent.Products.test(this.axiosParams);
+
+            const result = await agent.Products.test(this.axiosParams);
 
             runInAction(() => {
-                this.products = products;
+                this.products = result.data;
+                this.pagination = result.pagination;
                 this.loading = false;
             })
 
@@ -41,6 +49,13 @@ export default class ProductStore {
     setOrderBy = (orderby: string) => {
         runInAction(() => {
             this.orderBy = orderby;
+            this.getProducts();
+        })
+    }
+
+    setPagingParams = (pagingParams: PagingParams) => {
+        runInAction(() => {
+            this.pagingParams = pagingParams;
             this.getProducts();
         })
     }
