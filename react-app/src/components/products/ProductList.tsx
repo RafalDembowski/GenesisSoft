@@ -3,9 +3,11 @@ import React, { useEffect , useState } from 'react'
 import { Container, Content, Table , Pagination } from 'rsuite'
 import { PagingParams } from '../../models/pagination';
 import { useStore } from '../../stores/store';
+import { useNavigate } from 'react-router-dom';
 
 export default observer(function ProductList(){
 
+    const navigate = useNavigate();
     const { productStore } = useStore();
     const { loading , products , pagination , getProducts , setOrderBy , setPagingParams , pagingParams } = productStore;
     const [ sortType , setSortType ] = useState<any>();
@@ -34,6 +36,11 @@ export default observer(function ProductList(){
         setPagingParams(newPagingParams);
     };
 
+    const handleClick = (data : any) => {
+        let product = JSON.parse(JSON.stringify(data))
+        navigate(product.id);
+    }
+
     return (
         <Container>
             <Content>
@@ -44,9 +51,7 @@ export default observer(function ProductList(){
                     sortColumn={sortColumn}
                     sortType={sortType}
                     onSortColumn={handleSortColumn}
-                    onRowClick={data => {
-                        console.log(data);
-                    }}
+                    onRowClick={handleClick}
                 >
                     <Table.Column width={170} align="center" fixed sortable>
                         <Table.HeaderCell>Id</Table.HeaderCell>
