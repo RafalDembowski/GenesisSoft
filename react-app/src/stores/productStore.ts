@@ -6,11 +6,12 @@ import { Product } from "../models/product";
 export default class ProductStore {
 
     products: Product[] = [];
-    loading = false;
+    product: Product | undefined = undefined;
+    loadingProduct = false;
     orderBy: string = '';
     pagination: Pagination | null = null;
     pagingParams = new PagingParams();
-    
+
     constructor(){
         makeAutoObservable(this)
     }
@@ -29,21 +30,45 @@ export default class ProductStore {
     }
 
     getProducts = async () => {
-        this.loading = true;
+        this.loadingProduct = true;
         try{
 
-            const result = await agent.Products.test(this.axiosParams);
+            const result = await agent.Products.list(this.axiosParams);
 
             runInAction(() => {
                 this.products = result.data;
                 this.pagination = result.pagination;
-                this.loading = false;
+                this.loadingProduct = false;
             })
 
         }catch(error){
             console.log(error)
-            runInAction(() => this.loading = false)
+            runInAction(() => this.loadingProduct = false)
         }
+    }
+
+    getProduct = async (id: string) => {
+        let product = this.getProductById(id);
+
+        if(product){
+            this.product = product;
+            return product;
+        }
+        else{
+            this.loadingProduct = true;
+            try{
+                product = await agent.Products.get(id);
+                runInAction(() => {
+                    this.product = product;
+                    this.loadingProduct = false;
+                })
+                return product;
+            }catch(error){
+                console.log(error)
+                runInAction(() => this.loadingProduct = false)
+            }
+        }
+
     }
 
     setOrderBy = (orderby: string) => {
@@ -60,4 +85,7 @@ export default class ProductStore {
         })
     }
 
+    private getProductById = (id: string) => {
+        return this.products.find(p => p.id === id);
+    }
 }

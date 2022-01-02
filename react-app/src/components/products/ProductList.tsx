@@ -9,7 +9,7 @@ export default observer(function ProductList(){
 
     const navigate = useNavigate();
     const { productStore } = useStore();
-    const { loading , products , pagination , getProducts , setOrderBy , setPagingParams , pagingParams } = productStore;
+    const { loadingProduct , products , pagination , getProducts , setOrderBy , setPagingParams , pagingParams } = productStore;
     const [ sortType , setSortType ] = useState<any>();
     const [ sortColumn , setSortColumn ] = useState< string | undefined >();
     const [ page , setPage ] = useState<number>(1);
@@ -47,7 +47,7 @@ export default observer(function ProductList(){
                 <Table
                     height={420}
                     data={products}
-                    loading={loading}
+                    loading={loadingProduct}
                     sortColumn={sortColumn}
                     sortType={sortType}
                     onSortColumn={handleSortColumn}

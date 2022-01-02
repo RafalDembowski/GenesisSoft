@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import { PaginatedResult } from '../models/pagination';
 import { Product } from '../models/product';
+import { ProductCategoryDropdownItem } from '../models/productCategory';
 
 axios.defaults.baseURL = 'https://localhost:44330'
 
@@ -24,12 +25,17 @@ const requests = {
 }
 
 const Products = {
-    list: () => requests.get<Product[]>('api/Products'),
-    test: (params: URLSearchParams) => axios.get<PaginatedResult<Product[]>>('/api/Products', { params }).then(responseBody),
+    list: (params: URLSearchParams) => axios.get<PaginatedResult<Product[]>>('/api/Products', { params }).then(responseBody),
+    get: (id: string) => requests.get<Product>(`api/Products/${id}`)
+}
+
+const ProductCategories = {
+    dropDowItems: () => requests.get<ProductCategoryDropdownItem[]>(`api/ProductCategories/dropdownItems`)
 }
 
 const agent = {
-    Products
+    Products,
+    ProductCategories
 }
 
 export default agent;

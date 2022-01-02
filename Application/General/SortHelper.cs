@@ -6,6 +6,13 @@ namespace Infrastructure.Helpers
 {
     public static class SortHelper
     {
+        public static string GetSortingType(string sortQueryParameter)
+        {
+            string[] splitedSortQueryParameter = sortQueryParameter.Split(" ");
+            string sortingType = splitedSortQueryParameter.Length > 1 ? splitedSortQueryParameter[1] : "";
+            return sortingType;
+        }
+
         public static string ValidateSortQueryParameters(string sortQueryParameter)
         {
             StringBuilder sortQueryParameterBuilder = new StringBuilder();

@@ -12,30 +12,29 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation;
-
-namespace Application.Products
+namespace Application.ProductCategories
 {
     public class Create
     {
         public class Command : IRequest<Result<Unit>>
         {
-            public ProductCommandDto Product { get; set; }
+            public ProductCategoryCommandDto ProductCategory { get; set; }
         }
 
         public class CommandValidator : AbstractValidator<Command>
         {
             public CommandValidator()
             {
-                RuleFor(p => p.Product).SetValidator(new ProductValidator());
+                RuleFor(p => p.ProductCategory).SetValidator(new ProductCategoryValidator());
             }
         }
 
-        public class Handler : IRequestHandler<Command , Result<Unit>>
+        public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
             private readonly IUserAccessHelper _userAccessHelper;
-            public Handler(DataContext context , IMapper mapper , IUserAccessHelper userAccessHelper)
+            public Handler(DataContext context, IMapper mapper, IUserAccessHelper userAccessHelper)
             {
                 _context = context;
                 _mapper = mapper;
@@ -44,17 +43,15 @@ namespace Application.Products
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var product = _mapper.Map<Product>(request.Product);
+                var productCategory = _mapper.Map<ProductCategory>(request.ProductCategory);
                 var userName = _userAccessHelper.GetCurrentUserName();
+                productCategory.CreatedBy = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userName);
 
-                product.CreatedBy = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userName);
-                product.Category = await _context.ProductCategories.FirstOrDefaultAsync(pc => pc.Id == request.Product.CategoryId);
-
-                _context.Products.Add(product);
+                _context.ProductCategories.Add(productCategory);
 
                 var result = await _context.SaveChangesAsync() > 0;
 
-                if (!result) return Result<Unit>.Failure("Problem creating a product.");
+                if (!result) return Result<Unit>.Failure("Problem creating a product category.");
 
                 return Result<Unit>.Success(Unit.Value);
             }

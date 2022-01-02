@@ -36,7 +36,27 @@ namespace Application.Products
 
             public async Task<Result<PagedList<ProductQueryDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                string orderBy = SortHelper.ValidateSortQueryParameters(request.Params.OrderBy);
+                string sortingType = "";
+                string orderByValue = request.Params.OrderBy;
+
+                if (!String.IsNullOrEmpty(orderByValue))
+                {               
+                    switch (orderByValue)
+                    {
+                        case var typeOfOrderBy when orderByValue.ToLower().Contains("categoryname"):
+                            sortingType = SortHelper.GetSortingType(orderByValue);
+                            orderByValue = "Category.Name " + sortingType;
+                            break;
+                        case var typeOfOrderBy when orderByValue.ToLower().Contains("producername"):
+                            sortingType = SortHelper.GetSortingType(orderByValue);
+                            orderByValue = "Producer.Name " + sortingType;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                string orderBy = SortHelper.ValidateSortQueryParameters(orderByValue);
 
                 var query = _context.Products
                     .OrderBy(orderBy)

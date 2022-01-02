@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using AutoMapper;
 using Domain;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -19,6 +20,13 @@ namespace Application.Products
         {
             public ProductCommandDto Product { get; set; }
             public Guid Id { get; set; }
+        }
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(p => p.Product).SetValidator(new ProductValidator());
+            }
         }
 
         public class Handler : IRequestHandler<Command, Result<Unit>>

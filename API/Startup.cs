@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using API.Middlewares;
 using API.Services;
-using Application.Addresses;
 using Application.General;
 using Application.Interfaces;
+using Application.Products;
 using Domain;
+using FluentValidation.AspNetCore;
 using Infrastructure.Helpers;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -48,6 +49,9 @@ namespace API
                 AuthorizationPolicy policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
                 opt.Filters.Add(new AuthorizeFilter(policy));
                 
+            }).AddFluentValidation(config => 
+            {
+                config.RegisterValidatorsFromAssemblyContaining<Create>();
             });
 
             services.AddSwaggerGen( opt => 
@@ -90,7 +94,7 @@ namespace API
                         .AllowAnyHeader()
                         .AllowCredentials()
                         .WithExposedHeaders("WWW-Authenticate", "Pagination")
-                        .WithOrigins("http://localhost:3003");
+                        .WithOrigins("http://localhost:3001");
                 });
             });
 
